@@ -1,0 +1,26 @@
+version: '3'
+services:
+  redis:
+    image: redis:latest
+    container_name: redis-master
+    ports:
+      - "6379:6379"
+    networks:
+      - redis-net
+
+  redis-sentinel:
+    image: redis:latest
+    container_name: redis-sentinel
+    command: [ "redis-server", "/etc/redis/sentinel.conf", "--sentinel" ]
+    ports:
+      - "26379:26379"
+    environment:
+      - REDIS_SENTINEL_QUORUM=1
+    volumes:
+      - ./sentinel.conf:/etc/redis/sentinel.conf
+    networks:
+      - redis-net
+
+networks:
+  redis-net:
+    driver: bridge
